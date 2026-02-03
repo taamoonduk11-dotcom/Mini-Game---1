@@ -1,5 +1,16 @@
+import javax.swing.JFrame;
 public class Main {
     public static void main(String[] args){
-       System.out.println("Deneme commiti...");
+       JFrame window=new JFrame();
+
+       window.setTitle("Sneak GAME - BİLAL");
+
+       window.setSize(450,450);
+
+       window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+       window.setVisible(true);
+
+       window.setLocationRelativeTo(null);
     }
 }
