@@ -6,7 +6,10 @@ public class GamePanel extends JPanel implements java.awt.event.ActionListener{
     static final int UNIT_SIZE=25;
     int x[]=new int[600];
     int y[]=new int[600];
+    int appleX;
+    int appleY;
     int bodyParts=6;
+
     public static char direction='R';
     boolean running = false;
     javax.swing.Timer timer;
@@ -16,23 +19,32 @@ public class GamePanel extends JPanel implements java.awt.event.ActionListener{
         this.setFocusable(true);
         startGame();
     }
+    public void newApple(){
+        appleX= new java.util.Random().nextInt((int)(450/UNIT_SIZE))*UNIT_SIZE;
+        appleY= new java.util.Random().nextInt((int)(450/UNIT_SIZE))*UNIT_SIZE;
+    }
+
+
     @Override
     public void paintComponent(Graphics g){
         super.paintComponent(g);
         draw(g);
     }
     public void draw(Graphics g){
+        g.setColor(Color.red);
+        g.fillOval(appleX,appleY,UNIT_SIZE,UNIT_SIZE);
         for(int i=0;i<bodyParts;i++){
             if(i==0){
                 g.setColor(Color.green);
                 g.fillRect(x[i],y[i],UNIT_SIZE,UNIT_SIZE);
             }
             else{
-                g.setColor(new Color(45,170,0));
+                g.setColor(new Color(45,50,0));
                 g.fillRect(x[i],y[i],UNIT_SIZE,UNIT_SIZE);
             }
         }
     }
+
     public void startGame(){
         running =true;
 
@@ -66,6 +78,11 @@ public class GamePanel extends JPanel implements java.awt.event.ActionListener{
                         case 'R'->x[0]=x[0] + UNIT_SIZE;
         }
     }
-    public void checkApple(){ }
+
+    public void checkApple(){ if((x[0] == appleX) && (y[0] == appleY)){
+        bodyParts++;
+        newApple();
+    } }
+
     public void checkCollisions(){ }
 }

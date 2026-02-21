@@ -9,14 +9,11 @@ public class Main {
 
        window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-       window.setVisible(true);
-
-       window.setLocationRelativeTo(null);
-
        window.add(new GamePanel());
 
        window.setVisible(true);
 
+       window.setLocationRelativeTo(null);
 
     }
 }
