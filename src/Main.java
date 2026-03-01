@@ -5,11 +5,11 @@ public class Main {
 
        window.setTitle("Sneak GAME - BİLAL");
 
-       window.setSize(450,450);
-
        window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
        window.add(new GamePanel());
+
+       window.setSize(600,600);
 
        window.setVisible(true);
 
