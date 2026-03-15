@@ -2,6 +2,9 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.Random;
+import java.sql.*;
+import javax.swing.JOptionPane;
+
 
 public class GamePanel extends JPanel implements java.awt.event.ActionListener{
     static final int SCREEN_WIDTH = 600;
@@ -13,6 +16,9 @@ public class GamePanel extends JPanel implements java.awt.event.ActionListener{
     int appleY;
     int bodyParts=6;
     int blinkCounter=0;
+    Connection baglanti;
+    String aktifOyuncu;
+
 
     public static char direction='R';
     boolean running = false;
@@ -22,6 +28,17 @@ public class GamePanel extends JPanel implements java.awt.event.ActionListener{
         this.setBackground(Color.white);
         this.addKeyListener(new MyKeyAdapter());
         this.setFocusable(true);
+        try{
+            String url = "jdbc:sqlite:C:/Users/Bilal/Desktop/stoktakip-sql/SnakeGame.db";
+            baglanti = DriverManager.getConnection(url);
+            aktifOyuncu = JOptionPane.showInputDialog("Sneak Game' e Hoş Geldin! Adın ne?");
+            if(aktifOyuncu != null && !aktifOyuncu.trim().isEmpty()){
+                oyuncuKaydet(baglanti,aktifOyuncu);
+            }
+        }catch(SQLException e){
+            e.printStackTrace();
+        }
+
         startGame();
     }
 
@@ -91,6 +108,7 @@ public class GamePanel extends JPanel implements java.awt.event.ActionListener{
             g.setFont(new Font("Ink Free", Font.BOLD, 70));
             FontMetrics metrics1 = getFontMetrics(g.getFont());
             g.drawString("GAME OVER", (SCREEN_WIDTH - metrics1.stringWidth("GAME OVER")) / 2, SCREEN_HEIGHT / 2);
+            skorGuncelle(baglanti, aktifOyuncu, bodyParts - 6);
 
         }
     }
@@ -137,5 +155,26 @@ public class GamePanel extends JPanel implements java.awt.event.ActionListener{
             checkCollisions();
         }
         repaint();
+    }
+    public void oyuncuKaydet(Connection baglanti,String isim){
+        String sql="INSERT OR IGNORE INTO oyuncular(kullanici_adi) VALUES (?)";
+        try(PreparedStatement pstmt = baglanti.prepareStatement(sql)){
+            pstmt.setString(1,isim);
+            pstmt.executeUpdate();
+            System.out.println("Sisteme giriş yapıldı: "+ isim);
+        }catch(SQLException e){
+            e.printStackTrace();
+        }
+    }
+    public void skorGuncelle(Connection baglanti, String isim, int yeniSkor){
+        String sql="UPDATE oyuncular SET en_yuksek_skor = ? WHERE kullanici_adi = ? AND ? > en_yuksek_skor";
+        try(PreparedStatement pstmt= baglanti.prepareStatement(sql)){
+            pstmt.setInt(1,yeniSkor);
+            pstmt.setString(2,isim);
+            pstmt.setInt(3,yeniSkor);
+            pstmt.executeUpdate();
+        }catch(SQLException e){
+            e.printStackTrace();
+        }
     }
 }
