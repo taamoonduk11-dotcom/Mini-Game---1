@@ -29,7 +29,7 @@ public class GamePanel extends JPanel implements java.awt.event.ActionListener{
         this.addKeyListener(new MyKeyAdapter());
         this.setFocusable(true);
         try{
-            String url = "jdbc:sqlite:C:/Users/Bilal/Desktop/stoktakip-sql/SnakeGame.db";
+            String url = "jdbc:sqlite:C:\\Users\\Bilal\\Desktop\\SneakGame.db\\Sneak_Game.db";
             baglanti = DriverManager.getConnection(url);
             aktifOyuncu = JOptionPane.showInputDialog("Sneak Game' e Hoş Geldin! Adın ne?");
             if(aktifOyuncu != null && !aktifOyuncu.trim().isEmpty()){
@@ -108,7 +108,7 @@ public class GamePanel extends JPanel implements java.awt.event.ActionListener{
             g.setFont(new Font("Ink Free", Font.BOLD, 70));
             FontMetrics metrics1 = getFontMetrics(g.getFont());
             g.drawString("GAME OVER", (SCREEN_WIDTH - metrics1.stringWidth("GAME OVER")) / 2, SCREEN_HEIGHT / 2);
-            skorGuncelle(baglanti, aktifOyuncu, bodyParts - 6);
+
 
         }
     }
@@ -143,6 +143,11 @@ public class GamePanel extends JPanel implements java.awt.event.ActionListener{
 
         if(!running){
 
+            timer.stop();
+
+            skorGuncelle(baglanti, aktifOyuncu, bodyParts - 6);
+            String liderler = liderlikTablosuGetir(baglanti);
+            JOptionPane.showMessageDialog(null,liderler,"Zirvedekiler",JOptionPane.INFORMATION_MESSAGE);
             System.out.println("Game Over: please try again");
         }
     }
@@ -176,5 +181,23 @@ public class GamePanel extends JPanel implements java.awt.event.ActionListener{
         }catch(SQLException e){
             e.printStackTrace();
         }
+    }
+    public String liderlikTablosuGetir(Connection baglanti){
+        StringBuilder tablo = new StringBuilder("--- Liderlik Tablosu --- \n");
+        String sql= "SELECT kullanici_adi, en_yuksek_skor FROM oyuncular ORDER BY en_yuksek_skor DESC LIMIT 5";
+        try(Statement stmt= baglanti.createStatement();
+            ResultSet rs= stmt.executeQuery(sql)){
+            int sira = 1;
+            while(rs.next()){
+                tablo.append(sira).append(". ").append(rs.getString("kullanici_adi")).append(" : ").append(rs.getInt("en_yuksek_skor")).append("\n");
+                sira++;
+
+            }
+        }catch(SQLException e){
+            e.printStackTrace();
+
+        }
+        return tablo.toString();
+
     }
 }
